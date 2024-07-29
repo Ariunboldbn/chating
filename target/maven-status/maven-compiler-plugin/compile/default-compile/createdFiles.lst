@@ -1,0 +1,5 @@
+com\example\demo\DemoApplication.class
+com\example\demo\Config\WebSocketConfig.class
+com\example\demo\Repository\ChatRepository.class
+com\example\demo\Model\ChatMessage.class
+com\example\demo\Controller\ChatController.class

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: demo
+  data:
+    mongodb:
+      uri: mongodb+srv://FoodDelivery:M0WLpCyMmkvap3QM@todo.0q6abzo.mongodb.net/Chating?retryWrites=true&w=majority&appName=todo

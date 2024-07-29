@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="center test">
+        <div id="chat-page" class="container">
+            <p class="header" id="header"></p>
+            <div class="messageArea" id="messageArea"></div>
+            <Form class="rgstry" id="registry">
+                <input class="input" type="text" id="userNameInput" placeholder="Username" required>
+                <button class="button" id="loginButton">Login</button>
+            </Form>
+    
+            <Form class="hidden msgForm" id="messageForm" enctype="multipart/form-data">
+                <input class="input w-360" type="file" id="fileInput" accept="image/*">
+                <input class="input w-360" type="text" id="messageInput" placeholder="Type a message">
+                <button class="button" type="submit">Send</button>
+            </Form>
+        </div>
+    </div>
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
