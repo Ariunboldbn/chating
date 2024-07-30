@@ -9,6 +9,7 @@ var userNameInput = document.querySelector('#userNameInput');
 var registryForm = document.querySelector('#registry');
 var loginButton = document.querySelector('#loginButton');
 var header = document.querySelector("#header");
+var imageInput = document.querySelector('#imageInput');
 var fileInput = document.querySelector('#fileInput');
 
 var stompClient = null;
@@ -32,38 +33,67 @@ function send(event) {
 
     var messageContent = messageInput.value.trim();
     var userName = userNameInput.value.trim();
-    var file = fileInput.files[0];
+    var image = imageInput.files[0];
+    var input = fileInput.files[0];
+    
+    if (!messageContent && !image && !input) {
+        return;
+    }
 
-    if (messageContent || file) {
-        var chatMessage = {
-            content: messageContent,
-            sender: userName
-        };
+    var chatMessage = {
+        content: messageContent,
+        sender: userName
+    };
 
-        if (file) {
-            var reader = new FileReader();
-            reader.onloadend = function () {
-                chatMessage.fileContent = reader.result.split(',')[1];
-                chatMessage.fileName = file.name;
+    var filesToProcess = 0;
+    var processedFiles = 0;
 
-                stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage));
-                fileInput.value = ''; 
-            };
-            reader.readAsDataURL(file);
-        } else {
+    function onFileProcessed() {
+        processedFiles++;
+        if (processedFiles === filesToProcess) {
             stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage));
+            fileInput.value = ''; 
+            imageInput.value = ''; 
+            messageInput.value = '';
         }
+    }
 
+    if (input) {
+        filesToProcess++;
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            chatMessage.fileContent = `/upload/${input.name}`;
+            chatMessage.fileName = input.name;
+            onFileProcessed();
+        };
+        reader.readAsDataURL(input);
+    }
+
+    if (image) {
+        filesToProcess++;
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            chatMessage.imageUrl = `/upload/${image.name}`
+            chatMessage.imageName = image.name;
+            onFileProcessed();
+        }
+        reader.readAsDataURL(image);
+    }
+
+    if (filesToProcess === 0) {
+        stompClient.send("/app/chat.send", {}, JSON.stringify(chatMessage));
+        fileInput.value = ''; 
+        imageInput.value = ''; 
         messageInput.value = '';
     }
 }
-
 
 function handler(event) { 
     registryForm.classList.add("hidden");
     messageForm.classList.remove('hidden');
     event.preventDefault();
 }
+
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
@@ -74,18 +104,29 @@ function onMessageReceived(payload) {
     var userName = document.createTextNode(message.sender);
 
     userElement.appendChild(userName);
+    
 
     if (message.content) {
         var messageText = document.createTextNode(message.content);
         textElement.appendChild(messageText);
     }
 
-    if (message.fileContent) {
+    if (message.imageUrl) {
         var image = document.createElement('img');
-        image.src = 'data:image/jpeg;base64,' + message.fileContent;
+        image.src = message.imageUrl;
         image.style.maxWidth = '100px';
         container.appendChild(image);
     }
+
+    if(message.fileContent) {
+        var content = document.createElement('a');
+        content.href = message.fileContent;
+        content.download = message.fileName;
+        content.textContent = message.fileName;
+        content.style.display = 'block';
+        container.appendChild(content)   
+    }
+    
 
     container.appendChild(userElement);
     container.appendChild(textElement);

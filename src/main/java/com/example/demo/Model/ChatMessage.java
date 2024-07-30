@@ -10,7 +10,8 @@ public class ChatMessage {
     private String content;
     private String sender;
     private String imageUrl;
-    private byte[] fileContent;
+    private String fileContent;
+    private String imageName;
     private String fileName;
 
     public String getImageUrl() {
@@ -21,12 +22,20 @@ public class ChatMessage {
         this.imageUrl = imageUrl;
     }
 
-    public byte[] getFileContent() {
+    public String getFileContent() {
         return fileContent;
     }
 
-    public void setFileContent(byte[] fileContent) {
+    public void setFileContent(String fileContent) {
         this.fileContent = fileContent;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getId() {
@@ -53,12 +62,12 @@ public class ChatMessage {
         return sender;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getImageName() {
+        return imageName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     

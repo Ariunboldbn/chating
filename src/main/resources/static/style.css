@@ -18,7 +18,7 @@
 
 .container {
     width: 500px;
-    height: 650px;
+    height: 670px;
     border: 1px solid black;
     position: relative;
 }
@@ -59,7 +59,9 @@
     display: flex;
     gap: 10px;
     justify-content: center;
-    padding: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
     flex-direction: column;
 }
 
@@ -72,7 +74,7 @@
     z-index: 10;
 }
 
-.w-360{
+.w-300{
     width: 300px;
 }
 
@@ -80,8 +82,4 @@
     border-radius: 5px;
     border: 1px solid black;
     padding: 5px;
-}
-
-.header{
-
 }
