@@ -86,6 +86,7 @@ function send(event) {
         imageInput.value = ''; 
         messageInput.value = '';
     }
+    header.appendChild(userName)
 }
 
 function handler(event) { 

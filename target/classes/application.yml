@@ -5,4 +5,4 @@ spring:
     mongodb:
       uri: mongodb+srv://FoodDelivery:M0WLpCyMmkvap3QM@todo.0q6abzo.mongodb.net/Chating?retryWrites=true&w=majority&appName=todo
 server:
-  port: 8081
+  port: 8082
