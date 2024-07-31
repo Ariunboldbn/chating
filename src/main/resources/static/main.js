@@ -28,6 +28,12 @@ function onError() {
     connectingElement.textContent = 'connection error';
 }
 
+function handler(event) { 
+    registryForm.classList.add("hidden");
+    messageForm.classList.remove('hidden');
+    event.preventDefault();
+}
+
 function send(event) {
     event.preventDefault();
 
@@ -60,24 +66,40 @@ function send(event) {
 
     if (input) {
         filesToProcess++;
-        var reader = new FileReader();
-        reader.onloadend = function () {
-            chatMessage.fileContent = `/upload/${input.name}`;
-            chatMessage.fileName = input.name;
-            onFileProcessed();
-        };
-        reader.readAsDataURL(input);
+        var formData = new FormData();
+        formData.append("file", input);
+
+        fetch("/upload", {
+            method: "POST",
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                chatMessage.fileContent = './uploads/' + input.name;
+                chatMessage.fileName = input.name;
+                onFileProcessed();
+            } else {
+                console.error("File upload failed.");
+            }
+        });
     }
 
     if (image) {
         filesToProcess++;
-        var reader = new FileReader();
-        reader.onloadend = function () {
-            chatMessage.imageUrl = `/upload/${image.name}`
-            chatMessage.imageName = image.name;
-            onFileProcessed();
-        }
-        reader.readAsDataURL(image);
+        var formData = new FormData();
+        formData.append("file", image);
+
+        fetch("/upload", {
+            method: "POST",
+            body: formData
+        }).then(response => {
+            if (response.ok) {
+                chatMessage.imageUrl = './uploads/' + image.name;
+                chatMessage.imageName = image.name;
+                onFileProcessed();
+            } else {
+                console.error("Image upload failed.");
+            }
+        });
     }
 
     if (filesToProcess === 0) {
@@ -86,15 +108,7 @@ function send(event) {
         imageInput.value = ''; 
         messageInput.value = '';
     }
-    header.appendChild(userName)
 }
-
-function handler(event) { 
-    registryForm.classList.add("hidden");
-    messageForm.classList.remove('hidden');
-    event.preventDefault();
-}
-
 
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
@@ -134,6 +148,7 @@ function onMessageReceived(payload) {
     container.classList.add('flex');
     messageArea.appendChild(container);
 }
+
 
 
 loginButton.addEventListener('click', handler)

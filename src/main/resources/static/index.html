@@ -14,7 +14,7 @@
                 <input class="input" type="text" id="userNameInput" placeholder="Username" required>
                 <button class="button" id="loginButton">Login</button>
             </Form>
-            <Form class="hidden msgForm" id="messageForm" enctype="multipart/form-data">
+            <Form action="/uploads" method="post" class="hidden msgForm" id="messageForm" enctype="multipart/form-data">
                 <div>
                     <p>Add image</p>
                     <input class="input w-300" type="file" id="imageInput" accept="image/*">
