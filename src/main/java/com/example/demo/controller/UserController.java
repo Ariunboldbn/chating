@@ -20,7 +20,6 @@ public class UserController {
 
     @GetMapping("/me")
     public User getLoggedUser() {
-        // Replace "hardcodedUsername" with logic to get the current logged-in user.
         return userService.getLoggedUser();
     }
 

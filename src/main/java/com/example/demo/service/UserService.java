@@ -21,7 +21,7 @@ public class UserService {
     }
 
     public User getLoggedUser() {
-        return userRepository.findByUsername("tester1"); // Use a valid username from your database
+        return userRepository.findByUsername("tester1");
     }
 
     public User findByUsername(String username) {
