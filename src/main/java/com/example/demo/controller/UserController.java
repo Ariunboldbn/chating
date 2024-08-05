@@ -18,6 +18,12 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/me")
+    public User getLoggedUser() {
+        // Replace "hardcodedUsername" with logic to get the current logged-in user.
+        return userService.getLoggedUser();
+    }
+
     @GetMapping("/{id}")
     public User getUserById(@PathVariable String id) {
         return userService.getUserById(id);

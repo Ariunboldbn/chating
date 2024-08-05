@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <form class="form-container" id="loginForm">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="loginUsername">Username:</label>
+            <input type="text" id="loginUsername" required>
+        </div>
+        <div class="form-group">
+            <button type="button" onclick="login()">Login</button>
+        </div>
+    </form>
+
+    <div class="chat-container" id="chatContainer" style="display:none;">
+        <div class="chat-controls">
+            <div>
+                <label for="user2">Chat with User ID:</label>
+                <input type="text" id="user2" placeholder="User ID">
+                <button id="startChatBtn">Start Chat</button>
+            </div>
+
+            <div>
+                <h2>Messages</h2>
+                <div id="messages"></div>
+            </div>
+
+            <div>
+                <textarea id="messageInput" placeholder="Type a message"></textarea>
+                <button id="sendMessageBtn">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="server.js"></script>
+</body>
+</html>

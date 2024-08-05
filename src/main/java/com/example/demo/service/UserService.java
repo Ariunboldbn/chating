@@ -13,6 +13,25 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    public User signUp(User user) {
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("USER");
+        }
+        return userRepository.save(user);
+    }
+
+    public User getLoggedUser() {
+        return userRepository.findByUsername("tester1"); // Use a valid username from your database
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    public User login(String username) {
+        return userRepository.findByUsername(username);
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }

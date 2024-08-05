@@ -10,31 +10,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/messages")
 public class MessageController {
+
     @Autowired
     private MessageService messageService;
 
-    @GetMapping
-    public List<Message> getAllMessages() {
-        return messageService.getAllMessages();
-    }
-
-    @GetMapping("/{id}")
-    public Message getMessageById(@PathVariable String id) {
-        return messageService.getMessageById(id);
-    }
-
     @PostMapping
-    public Message createMessage(@RequestBody Message message) {
-        return messageService.createMessage(message);
+    public Message sendMessage(@RequestBody Message message) {
+        return messageService.saveMessage(message);
     }
 
-    @PutMapping("/{id}")
-    public Message updateMessage(@PathVariable String id, @RequestBody Message message) {
-        return messageService.updateMessage(id, message);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteMessage(@PathVariable String id) {
-        messageService.deleteMessage(id);
+    @GetMapping("/room/{chatRoomId}")
+    public List<Message> getMessagesByChatRoomId(@PathVariable String chatRoomId) {
+        return messageService.getMessagesByChatRoomId(chatRoomId);
     }
 }

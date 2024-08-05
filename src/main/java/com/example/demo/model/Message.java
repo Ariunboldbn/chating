@@ -12,10 +12,10 @@ import java.util.List;
 public class Message {
     @Id
     private String id;
-    private String chatId;
+    private String chatRoomId;
     private String senderId;
     private String content;
-    private List<String> attachments; // List of attachment IDs
+    private List<String> attachments;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

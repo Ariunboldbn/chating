@@ -12,7 +12,7 @@ public class Attachment {
     @Id
     private String id;
     private String messageId;
-    private String type; // "image" or "file"
+    private String type;
     private String url;
     private String filename;
     private long filesize;

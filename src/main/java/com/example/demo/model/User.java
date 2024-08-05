@@ -12,8 +12,7 @@ public class User {
     @Id
     private String id;
     private String username;
-    private String email;
-    private String passwordHash;
+    private String role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

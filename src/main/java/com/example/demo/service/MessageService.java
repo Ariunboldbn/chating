@@ -13,6 +13,14 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
+    public Message saveMessage(Message message) {
+        return messageRepository.save(message);
+    }
+
+    public List<Message> getMessagesByChatRoomId(String chatRoomId) {
+        return messageRepository.findByChatRoomId(chatRoomId);
+    }
+
     public List<Message> getAllMessages() {
         return messageRepository.findAll();
     }

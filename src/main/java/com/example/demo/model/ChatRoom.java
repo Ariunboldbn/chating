@@ -1,19 +1,19 @@
 package com.example.demo.model;
 
-import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Document(collection = "chats")
-public class Chat {
+@Document(collection = "chatrooms")
+public class ChatRoom {
     @Id
     private String id;
-    private String type; // "one-to-one" or "group"
-    private List<String> participants; // List of user IDs
+    private List<String> participants;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
