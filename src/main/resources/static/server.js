@@ -97,34 +97,6 @@ async function startChat() {
     }
 }
 
-function sendMessage() {
-    if (!chatRoomId) {
-        console.error('Chat room not selected.');
-        return;
-    }
-
-    const content = document.getElementById('messageInput').value;
-
-    const message = {
-        senderId: userId,
-        content: content
-    };
-
-    ws.send(JSON.stringify(message));
-
-    fetch(`${apiBaseUrl}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chatRoomId: chatRoomId, senderId: userId, content: content })
-    })
-    .then(response => response.json())
-    .then(() => {
-        loadMessages(chatRoomId);
-    })
-    .catch(error => console.error('Error:', error));
-    content.value = "";
-}
-
 async function loadMessages(chatRoomId) {
     try {
         const response = await fetch(`${apiBaseUrl}/messages/room/${chatRoomId}`);
@@ -134,7 +106,7 @@ async function loadMessages(chatRoomId) {
         messagesContainer.innerHTML = '';
 
         messages.forEach(msg => {
-            displayMessage(msg); // Call displayMessage with message object
+            displayMessage(msg);
         });
     } catch (error) {
         console.error('Error:', error);
@@ -145,31 +117,63 @@ async function loadMessages(chatRoomId) {
 function displayMessage(message) {
     const messagesContainer = document.getElementById('messages');
     const div = document.createElement('div');
-    const username = userMap.get(message.senderId) || 'Unknown'; // Get username from userMap
+    const username = userMap.get(message.senderId) || 'Unknown';
     div.textContent = `${username}: ${message.content}`;
     messagesContainer.appendChild(div);
 }
 
 function initializeWebSocket() {
-    ws = new WebSocket('ws://localhost:8080/chat');
+    ws = new WebSocket(`ws://localhost:8080/chat?userId=${userId}`);
 
     ws.onopen = function (event) {
-        console.log('WebSocket connection opened');
+        console.log('WebSocket connection opened', event);
     };
 
     ws.onmessage = function (event) {
+        console.log('WebSocket message received', event.data);
         const message = JSON.parse(event.data);
         displayMessage(message);
     };
 
     ws.onclose = function (event) {
-        console.log('WebSocket connection closed');
+        console.log('WebSocket connection closed', event);
     };
 
     ws.onerror = function (error) {
         console.error('WebSocket error:', error);
     };
 }
+
+function sendMessage() {
+    if (!chatRoomId) {
+        console.error('Chat room not selected.');
+        return;
+    }
+
+    const content = document.getElementById('messageInput').value;
+
+    const message = {
+        chatRoomId: chatRoomId,
+        senderId: userId,
+        content: content
+    };
+
+    ws.send(JSON.stringify(message));
+
+    fetch(`${apiBaseUrl}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(message)
+    })
+        .then(response => response.json())
+        .then(() => {
+            loadMessages(chatRoomId);
+        })
+        .catch(error => console.error('Error:', error));
+
+    document.getElementById('messageInput').value = "";
+}
+
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
