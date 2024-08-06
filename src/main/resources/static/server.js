@@ -1,4 +1,7 @@
 const apiBaseUrl = 'http://localhost:8080/api';
+let chatRoomId = null;
+let userId = null;
+let ws;
 
 async function login() {
     const username = document.getElementById('loginUsername').value;
@@ -14,7 +17,9 @@ async function login() {
             document.getElementById('loginForm').reset();
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('chatContainer').style.display = 'block';
-            userId = await getLoggedInUserId();
+            userId = await getLoggedInUserId(username);
+            initializeWebSocket();
+            await populateUserDropdown();
         } else {
             alert(`Error: ${result.message}`);
         }
@@ -24,9 +29,9 @@ async function login() {
     }
 }
 
-async function getLoggedInUserId() {
+async function getLoggedInUserId(username) {
     try {
-        const response = await fetch(`${apiBaseUrl}/users/me`);
+        const response = await fetch(`${apiBaseUrl}/users/me?username=${username}`);
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -46,18 +51,40 @@ async function getLoggedInUserId() {
     }
 }
 
-async function createChatRoom(user2Id) {
-    const user1Id = await getLoggedInUserId();
-    console.log("here is id " + user1Id)
+async function populateUserDropdown() {
     try {
-        const response = await fetch(`${apiBaseUrl}/chatrooms?user1Id=${encodeURIComponent(user1Id)}&user2Id=${encodeURIComponent(user2Id)}`, {
+        const response = await fetch(`${apiBaseUrl}/users`);
+        const users = await response.json();
+
+        const userSelect = document.getElementById('userSelect');
+        userSelect.innerHTML = '';
+
+        users.forEach(user => {
+            if (user.id !== userId) {
+                const option = document.createElement('option');
+                option.value = user.id;
+                option.textContent = user.username;
+                userSelect.appendChild(option);
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        alert('An error occurred while fetching users. Please try again.');
+    }
+}
+
+async function startChat() {
+    const user2Id = document.getElementById('userSelect').value;
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/chatrooms?user1Id=${userId}&user2Id=${user2Id}`, {
             method: 'POST'
         });
 
         const result = await response.json();
         if (response.ok) {
-            alert('Chat room created!');
-            loadChatRoom(result.id);
+            chatRoomId = result.id;
+            loadMessages(chatRoomId);
         } else {
             alert(`Error: ${result.message}`);
         }
@@ -65,52 +92,64 @@ async function createChatRoom(user2Id) {
         console.error('Error:', error);
         alert('An error occurred. Please try again.');
     }
+    console.log("Chat room created with " + user2Id);
 }
 
-async function loadChatRoom(chatRoomId) {
+function sendMessage() {
+    if (!chatRoomId) {
+        console.error('Chat room not selected.');
+        return;
+    }
+
+    const content = document.getElementById('messageInput').value;
+
+    const message = {
+        senderId: userId,
+        content: content
+    };
+
+    ws.send(JSON.stringify(message));
+
+    fetch(`${apiBaseUrl}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chatRoomId: chatRoomId, senderId: userId, content: content })
+    })
+    .then(response => response.json())
+    .then(() => {
+        loadMessages(chatRoomId);
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+async function loadMessages(chatRoomId) {
     try {
-        const response = await fetch(`${apiBaseUrl}/messages/${chatRoomId}`);
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const text = await response.text();
-        if (!text) {
-            throw new Error('No data received');
-        }
-
-        let messages;
-        try {
-            messages = JSON.parse(text);
-        } catch (jsonError) {
-            throw new Error('Failed to parse JSON: ' + jsonError.message);
-        }
-
-        if (!Array.isArray(messages)) {
-            throw new Error('Unexpected response format. Expected an array of messages.');
-        }
+        const response = await fetch(`${apiBaseUrl}/messages/room/${chatRoomId}`);
+        const messages = await response.json();
 
         const messagesContainer = document.getElementById('messages');
         messagesContainer.innerHTML = '';
 
-        messages.forEach(message => {
+        messages.forEach(msg => {
             const div = document.createElement('div');
-            div.textContent = `${message.senderId}: ${message.content}`;
+            div.textContent = `${msg.senderId}: ${msg.content}`;
             messagesContainer.appendChild(div);
         });
-
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred while loading messages. Please try again.');
+        alert('An error occurred. Please try again.');
     }
 }
 
-let chatRoomId = null;
-let userId = null;
+function displayMessage(message) {
+    const messagesContainer = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.textContent = `${message.senderId}: ${message.content}`;
+    messagesContainer.appendChild(div);
+}
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    const ws = new WebSocket('ws://localhost:8080/chat');
+function initializeWebSocket() {
+    ws = new WebSocket('ws://localhost:8080/chat');
 
     ws.onopen = function (event) {
         console.log('WebSocket connection opened');
@@ -128,86 +167,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     ws.onerror = function (error) {
         console.error('WebSocket error:', error);
     };
+}
 
-    document.getElementById('sendMessageBtn').addEventListener('click', function () {
-        sendMessage();
-    });
-
-    document.getElementById('startChatBtn').addEventListener('click', function () {
-        startChat();
-    });
-
-    async function startChat() {
-        const user2Id = document.getElementById('user2').value;
-
-        try {
-            const response = await fetch(`${apiBaseUrl}/chatrooms?user1Id=${userId}&user2Id=${user2Id}`, {
-                method: 'POST'
-            });
-
-            const result = await response.json();
-            if (response.ok) {
-                chatRoomId = result.id;
-                loadMessages(chatRoomId);
-            } else {
-                alert(`Error: ${result.message}`);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        }
-    }
-
-    function sendMessage() {
-        if (!chatRoomId) {
-            console.error('Chat room not selected.');
-            return;
-        }
-
-        const content = document.getElementById('messageInput').value;
-
-        const message = {
-            senderId: userId,
-            content: content
-        };
-
-        ws.send(JSON.stringify(message));
-
-        fetch(`${apiBaseUrl}/messages`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chatRoomId: chatRoomId, senderId: userId, content: content })
-        })
-            .then(response => response.json())
-            .then(() => {
-                loadMessages(chatRoomId);
-            })
-            .catch(error => console.error('Error:', error));
-    }
-
-    async function loadMessages(chatRoomId) {
-        try {
-            const response = await fetch(`${apiBaseUrl}/messages/room/${chatRoomId}`);
-            const messages = await response.json();
-
-            const messagesContainer = document.getElementById('messages');
-            messagesContainer.innerHTML = '';
-
-            messages.forEach(msg => {
-                const div = document.createElement('div');
-                div.textContent = `${msg.senderId}: ${msg.content}`;
-                messagesContainer.appendChild(div);
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        }
-    }
-
-    function displayMessage(message) {
-        const messagesContainer = document.getElementById('messages');
-        const div = document.createElement('div');
-        div.textContent = `${message.senderId}: ${message.content}`;
-        messagesContainer.appendChild(div);
-    }
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+    document.getElementById('startChatBtn').addEventListener('click', startChat);
 });

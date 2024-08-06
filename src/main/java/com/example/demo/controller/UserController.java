@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public User getLoggedUser() {
-        return userService.getLoggedUser();
+    public User getLoggedUser(@RequestParam String username) {
+        return userService.getLoggedUser(username);
     }
 
     @GetMapping("/{id}")
