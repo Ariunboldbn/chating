@@ -38,3 +38,57 @@ body {
     border: 1px solid #ccc;
     padding: 10px;
 }
+.chat-container {
+    display: none;
+    width: 400px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+.chat-controls {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+.chat-controls div {
+    margin-bottom: 15px;
+}
+label {
+    font-weight: bold;
+}
+#userSelect {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+#startChatBtn, #sendMessageBtn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#startChatBtn:hover, #sendMessageBtn:hover {
+    background-color: #0056b3;
+}
+h2 {
+    margin-top: 0;
+}
+#messages {
+    height: 200px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #fff;
+}
+#messageInput {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}

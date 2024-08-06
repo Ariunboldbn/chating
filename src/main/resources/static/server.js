@@ -2,6 +2,7 @@ const apiBaseUrl = 'http://localhost:8080/api';
 let chatRoomId = null;
 let userId = null;
 let ws;
+let userMap = new Map();
 
 async function login() {
     const username = document.getElementById('loginUsername').value;
@@ -41,6 +42,7 @@ async function getLoggedInUserId(username) {
         console.log("User data:", user);
 
         if (user && user.id) {
+            userMap.set(user.id, user.username);
             return user.id;
         } else {
             throw new Error('User ID not found in response');
@@ -65,6 +67,7 @@ async function populateUserDropdown() {
                 option.value = user.id;
                 option.textContent = user.username;
                 userSelect.appendChild(option);
+                userMap.set(user.id, user.username);
             }
         });
     } catch (error) {
@@ -92,7 +95,6 @@ async function startChat() {
         console.error('Error:', error);
         alert('An error occurred. Please try again.');
     }
-    console.log("Chat room created with " + user2Id);
 }
 
 function sendMessage() {
@@ -120,6 +122,7 @@ function sendMessage() {
         loadMessages(chatRoomId);
     })
     .catch(error => console.error('Error:', error));
+    content.value = "";
 }
 
 async function loadMessages(chatRoomId) {
@@ -131,9 +134,7 @@ async function loadMessages(chatRoomId) {
         messagesContainer.innerHTML = '';
 
         messages.forEach(msg => {
-            const div = document.createElement('div');
-            div.textContent = `${msg.senderId}: ${msg.content}`;
-            messagesContainer.appendChild(div);
+            displayMessage(msg); // Call displayMessage with message object
         });
     } catch (error) {
         console.error('Error:', error);
@@ -144,7 +145,8 @@ async function loadMessages(chatRoomId) {
 function displayMessage(message) {
     const messagesContainer = document.getElementById('messages');
     const div = document.createElement('div');
-    div.textContent = `${message.senderId}: ${message.content}`;
+    const username = userMap.get(message.senderId) || 'Unknown'; // Get username from userMap
+    div.textContent = `${username}: ${message.content}`;
     messagesContainer.appendChild(div);
 }
 
