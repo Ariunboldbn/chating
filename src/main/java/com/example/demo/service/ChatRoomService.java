@@ -27,4 +27,8 @@ public class ChatRoomService {
         chatRoom.setParticipants(participants);
         return chatRoomRepository.save(chatRoom);
     }
+
+    public ChatRoom findChatRoomById(String chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId).orElse(null);
+    }
 }

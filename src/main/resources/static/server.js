@@ -127,7 +127,7 @@ function initializeWebSocket() {
     ws = new WebSocket(`ws://localhost:8080/chat?userId=${userId}`);
 
     ws.onopen = function (event) {
-        console.log('WebSocket connection opened', event);
+        console.log('WebSocket connection opened');
     };
 
     ws.onmessage = function (event) {
@@ -137,7 +137,7 @@ function initializeWebSocket() {
     };
 
     ws.onclose = function (event) {
-        console.log('WebSocket connection closed', event);
+        console.log('WebSocket connection closed');
     };
 
     ws.onerror = function (error) {
