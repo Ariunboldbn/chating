@@ -22,18 +22,19 @@
         <div class="chat-controls">
             <div>
                 <label for="userSelect">Chat with:</label>
-                <select id="userSelect"></select>
-                <button id="startChatBtn">Start Chat</button>
+                <div id="userSelect"></div>
             </div>
-
-            <div>
-                <h2>Messages</h2>
-                <div id="messages"></div>
-            </div>
-
-            <div>
-                <textarea id="messageInput" placeholder="Type a message"></textarea>
-                <button id="sendMessageBtn">Send Message</button>
+            
+            <div id="messageArea" style="display: none;">
+                <div>
+                    <h2>Messages</h2>
+                    <div id="messages"></div>
+                </div>
+    
+                <div>
+                    <textarea id="messageInput" placeholder="Type a message"></textarea>
+                    <button id="sendMessageBtn">Send Message</button>
+                </div>
             </div>
         </div>
     </div>

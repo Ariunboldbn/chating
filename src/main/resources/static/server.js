@@ -63,10 +63,12 @@ async function populateUserDropdown() {
 
         users.forEach(user => {
             if (user.id !== userId) {
-                const option = document.createElement('option');
-                option.value = user.id;
-                option.textContent = user.username;
-                userSelect.appendChild(option);
+                const button = document.createElement('button');
+                button.value = user.id;
+                button.textContent = user.username;
+                button.addEventListener('click', () => startChat(user.id));
+                button.style = "width: 100px;"
+                userSelect.appendChild(button);
                 userMap.set(user.id, user.username);
             }
         });
@@ -76,9 +78,8 @@ async function populateUserDropdown() {
     }
 }
 
-async function startChat() {
-    const user2Id = document.getElementById('userSelect').value;
-
+async function startChat(user2Id) {
+    document.getElementById('messageArea').style.display = 'block';
     try {
         const response = await fetch(`${apiBaseUrl}/chatrooms?user1Id=${userId}&user2Id=${user2Id}`, {
             method: 'POST'

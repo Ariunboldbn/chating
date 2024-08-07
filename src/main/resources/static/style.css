@@ -64,6 +64,9 @@ label {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 #startChatBtn, #sendMessageBtn {
     background-color: #007bff;
