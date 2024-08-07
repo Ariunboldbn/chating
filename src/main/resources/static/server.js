@@ -178,5 +178,4 @@ function sendMessage() {
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
-    document.getElementById('startChatBtn').addEventListener('click', startChat);
 });
