@@ -39,16 +39,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(String id, User user) {
-        User existingUser = userRepository.findById(id).orElse(null);
-        if (existingUser != null) {
-            user.setId(id);
-            user.setUpdatedAt(LocalDateTime.now());
-            return userRepository.save(user);
-        }
-        return null;
-    }
-
     public void deleteUser(String id) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {

@@ -28,11 +28,6 @@ public class AttachmentController {
         return attachmentService.createAttachment(attachment, creatorUserId);
     }
 
-    @PutMapping("/{id}")
-    public Attachment updateAttachment(@PathVariable String id, @RequestBody Attachment attachment) {
-        return attachmentService.updateAttachment(id, attachment);
-    }
-
     @DeleteMapping("/{id}")
     public void deleteAttachment(@PathVariable String id) {
         attachmentService.deleteAttachment(id);

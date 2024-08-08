@@ -28,16 +28,6 @@ public class AttachmentService {
         return attachmentRepository.save(attachment);
     }
 
-    public Attachment updateAttachment(String id, Attachment attachment) {
-        Attachment existingAttachment = attachmentRepository.findById(id).orElse(null);
-        if (existingAttachment != null) {
-            attachment.setId(id);
-            attachment.setUpdatedAt(LocalDateTime.now());
-            return attachmentRepository.save(attachment);
-        }
-        return null;
-    }
-
     public void deleteAttachment(String id) {
         attachmentRepository.deleteById(id);
     }
