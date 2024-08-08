@@ -1,21 +1,18 @@
 package com.example.demo.model;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.EqualsAndHashCode;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "attachments")
-public class Attachment {
-    @Id
-    private String id;
+public class Attachment extends BaseModel {
     private String messageId;
     private String type;
     private String url;
     private String filename;
     private long filesize;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

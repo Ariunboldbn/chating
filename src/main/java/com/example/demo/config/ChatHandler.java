@@ -4,6 +4,9 @@ import com.example.demo.model.ChatRoom;
 import com.example.demo.model.Message;
 import com.example.demo.service.ChatRoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -12,9 +15,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatHandler extends TextWebSocketHandler {
+
+    final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Map<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,13 +31,10 @@ public class ChatHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String uri = session.getUri().toString();
-        String userId = UriComponentsBuilder.fromUriString(uri).build().getQueryParams().getFirst("userId");
-
-        if (userId != null) {
-            sessions.put(userId, session);
-        } else {
-            System.out.println("User ID is null");
-        }
+        Optional.ofNullable(UriComponentsBuilder.fromUriString(uri).build().getQueryParams().getFirst("userId"))
+                .ifPresentOrElse(
+                        userId -> sessions.put(userId, session),
+                        () -> log.warn("User ID is null for session: {}", session.getId()));
     }
 
     @Override
@@ -47,7 +50,7 @@ public class ChatHandler extends TextWebSocketHandler {
             if (recipientSession != null && recipientSession.isOpen()) {
                 recipientSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(msg)));
             } else {
-                System.out.println("Recipient session not found" + participantId);
+                log.error("Recipient session not found" + participantId);
             }
         }
     }

@@ -1,18 +1,14 @@
 package com.example.demo.model;
 
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.EqualsAndHashCode;
+
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
-
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Document(collection = "users")
-public class User {
-    @Id
-    private String id;
+public class User extends BaseModel{
     private String username;
     private String role;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
