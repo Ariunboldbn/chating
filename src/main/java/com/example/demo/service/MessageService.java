@@ -43,6 +43,10 @@ public class MessageService {
     }
 
     public void deleteMessage(String id) {
-        messageRepository.deleteById(id);
-    }
+        Message message = messageRepository.findById(id).orElse(null);
+        if (message != null) {
+            message.setVoided(true);
+            messageRepository.save(message);
+        }
+    }    
 }

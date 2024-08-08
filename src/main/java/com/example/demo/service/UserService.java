@@ -50,6 +50,10 @@ public class UserService {
     }
 
     public void deleteUser(String id) {
-        userRepository.deleteById(id);
-    }
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null) {
+            user.setVoided(true);
+            userRepository.save(user);
+        }
+    }    
 }

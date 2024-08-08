@@ -35,4 +35,12 @@ public class ChatRoomService {
     public ChatRoom findChatRoomById(String chatRoomId) {
         return chatRoomRepository.findById(chatRoomId).orElse(null);
     }
+
+    public void deleteChatRoom(String id) {
+        ChatRoom chatRoom = chatRoomRepository.findById(id).orElse(null);
+        if (chatRoom != null) {
+            chatRoom.setVoided(true);
+            chatRoomRepository.save(chatRoom);
+        }
+    }    
 }
