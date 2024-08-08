@@ -13,7 +13,10 @@ public class MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
-    public Message saveMessage(Message message) {
+    public Message saveMessage(Message message, String creatorUserId) {
+        message.setCreatedUserId(creatorUserId);
+        message.setCreatedAt(LocalDateTime.now());
+        message.setUpdatedAt(LocalDateTime.now());
         return messageRepository.save(message);
     }
 
@@ -27,12 +30,6 @@ public class MessageService {
 
     public Message getMessageById(String id) {
         return messageRepository.findById(id).orElse(null);
-    }
-
-    public Message createMessage(Message message) {
-        message.setCreatedAt(LocalDateTime.now());
-        message.setUpdatedAt(LocalDateTime.now());
-        return messageRepository.save(message);
     }
 
     public Message updateMessage(String id, Message message) {

@@ -33,15 +33,19 @@ public class ChatHandler extends TextWebSocketHandler {
         String uri = session.getUri().toString();
         Optional.ofNullable(UriComponentsBuilder.fromUriString(uri).build().getQueryParams().getFirst("userId"))
                 .ifPresentOrElse(
-                        userId -> sessions.put(userId, session),
-                        () -> log.warn("User ID is null for session: {}", session.getId()));
+                        userId -> {
+                            sessions.put(userId, session);
+                            log.info("WebSocket session established for userId: {}", userId);
+                        },
+                        () -> log.warn("User ID is null", session.getId()));
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-
         Message msg = objectMapper.readValue(payload, Message.class);
+
+        log.info("Received message {}", msg.getContent());
 
         List<String> participants = getChatRoomParticipants(msg.getChatRoomId());
 
@@ -49,8 +53,9 @@ public class ChatHandler extends TextWebSocketHandler {
             WebSocketSession recipientSession = sessions.get(participantId);
             if (recipientSession != null && recipientSession.isOpen()) {
                 recipientSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(msg)));
+                log.info("Message sent to user {}", participantId);
             } else {
-                log.error("Recipient session not found" + participantId);
+                log.error("Recipient session not found {}", participantId);
             }
         }
     }

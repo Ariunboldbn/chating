@@ -81,7 +81,7 @@ async function populateUserDropdown() {
 async function startChat(user2Id) {
     document.getElementById('messageArea').style.display = 'block';
     try {
-        const response = await fetch(`${apiBaseUrl}/chatrooms?user1Id=${userId}&user2Id=${user2Id}`, {
+        const response = await fetch(`${apiBaseUrl}/chatrooms?user1Id=${userId}&user2Id=${user2Id}&creatorUserId=${userId}`, {
             method: 'POST'
         });
 
@@ -161,7 +161,7 @@ function sendMessage() {
 
     ws.send(JSON.stringify(message));
 
-    fetch(`${apiBaseUrl}/messages`, {
+    fetch(`${apiBaseUrl}/messages?creatorUserId=${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(message)
@@ -174,6 +174,7 @@ function sendMessage() {
 
     document.getElementById('messageInput').value = "";
 }
+
 
 
 document.addEventListener('DOMContentLoaded', (event) => {

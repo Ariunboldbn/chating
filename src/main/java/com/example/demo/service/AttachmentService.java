@@ -21,9 +21,10 @@ public class AttachmentService {
         return attachmentRepository.findById(id).orElse(null);
     }
 
-    public Attachment createAttachment(Attachment attachment) {
+    public Attachment createAttachment(Attachment attachment, String creatorUserId) {
         attachment.setCreatedAt(LocalDateTime.now());
         attachment.setUpdatedAt(LocalDateTime.now());
+        attachment.setCreatedUserId(creatorUserId);
         return attachmentRepository.save(attachment);
     }
 

@@ -24,8 +24,8 @@ public class AttachmentController {
     }
 
     @PostMapping
-    public Attachment createAttachment(@RequestBody Attachment attachment) {
-        return attachmentService.createAttachment(attachment);
+    public Attachment createAttachment(@RequestBody Attachment attachment, @RequestParam String creatorUserId) {
+        return attachmentService.createAttachment(attachment, creatorUserId);
     }
 
     @PutMapping("/{id}")

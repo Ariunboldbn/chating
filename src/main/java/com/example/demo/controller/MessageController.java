@@ -15,8 +15,8 @@ public class MessageController {
     private MessageService messageService;
 
     @PostMapping
-    public Message sendMessage(@RequestBody Message message) {
-        return messageService.saveMessage(message);
+    public Message sendMessage(@RequestBody Message message, @RequestParam String creatorUserId) {
+        return messageService.saveMessage(message, creatorUserId);
     }
 
     @GetMapping("/room/{chatRoomId}")

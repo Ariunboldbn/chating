@@ -13,7 +13,7 @@ public class ChatRoomController {
     private ChatRoomService chatRoomService;
 
     @PostMapping
-    public ChatRoom createChatRoom(@RequestParam String user1Id, @RequestParam String user2Id) {
-        return chatRoomService.createChatRoom(user1Id, user2Id);
+    public ChatRoom createChatRoom(@RequestParam String user1Id, @RequestParam String user2Id, @RequestParam String creatorUserId) {
+        return chatRoomService.createChatRoom(user1Id, user2Id, creatorUserId);
     }
 }
